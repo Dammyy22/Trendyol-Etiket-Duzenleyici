@@ -1,0 +1,1 @@
+Windows EXE derlemesini baslatir.
