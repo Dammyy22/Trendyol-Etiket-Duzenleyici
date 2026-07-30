@@ -1,0 +1,49 @@
+name: Android APK Olustur
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "android/**"
+      - ".github/workflows/android-apk.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "android/**"
+      - ".github/workflows/android-apk.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Kodlari al
+        uses: actions/checkout@v4
+
+      - name: Java 17 kur
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Gradle kur
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: APK olustur
+        working-directory: android
+        run: gradle :app:assembleDebug --no-daemon
+
+      - name: APK dosyasini paketle
+        uses: actions/upload-artifact@v4
+        with:
+          name: Trendyol_Etiket_Duzenleyici_Android
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
