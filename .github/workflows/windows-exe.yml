@@ -1,0 +1,44 @@
+name: Windows EXE Olustur
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Kodlari al
+        uses: actions/checkout@v4
+
+      - name: Python 3.12 kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Gerekli paketleri kur
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: EXE olustur
+        run: |
+          pyinstaller --noconfirm --clean --onefile --windowed `
+            --name "Trendyol_Etiket_Duzenleyici" `
+            --collect-all pymupdf `
+            etiket_duzenleyici.py
+
+      - name: EXE dosyasini paketle
+        uses: actions/upload-artifact@v4
+        with:
+          name: Trendyol_Etiket_Duzenleyici_Windows
+          path: dist/Trendyol_Etiket_Duzenleyici.exe
+          if-no-files-found: error
+          compression-level: 0
